@@ -1,11 +1,8 @@
-import { Text, View, TextInput, StyleSheet } from "react-native";
-
-import IconButton from "./IconButton";
+import { View, TextInput, StyleSheet } from "react-native";
 
 function DescriptionBox() {
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Description</Text>
       <View style={styles.innerContainer}>
         <TextInput
           style={styles.input}
@@ -13,7 +10,6 @@ function DescriptionBox() {
           multiline
           textAlignVertical="top"
         />
-        <IconButton icon="mic" size={32} style={styles.mic} />
       </View>
     </View>
   );
@@ -30,16 +26,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  label: {
-    marginLeft: 16,
-    marginBottom: 8,
-  },
   input: {
     borderWidth: 1,
-    width: 220,
-    height: 80,
-    borderRadius: 6,
-    marginHorizontal: 12,
+    width: 280,
+    height: 120,
+    borderRadius: 12,
+    padding: 8,
   },
   mic: {
     backgroundColor: "#cecece",

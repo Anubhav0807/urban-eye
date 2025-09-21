@@ -3,9 +3,10 @@ import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import Home from "./screens/Home";
+import HomeScreen from "./screens/HomeScreen";
 import ComplaintForm from "./screens/ComplaintForm";
-import IconButton from "./components/IconButton";
+
+import Button from "./components/Button";
 import ProfileMenu from "./components/ProfileMenu";
 
 const Stack = createStackNavigator();
@@ -25,9 +26,9 @@ export default function App() {
           screenOptions={{
             headerRight: () => (
               <>
-                <IconButton
-                  icon="person-circle"
-                  size={36}
+                <Button
+                  iconLeft="person-circle"
+                  iconSize={36}
                   onPress={toggleProfileMenu}
                 />
                 <ProfileMenu
@@ -40,8 +41,8 @@ export default function App() {
           }}
         >
           <Stack.Screen
-            name="Home"
-            component={Home}
+            name="HomeScreen"
+            component={HomeScreen}
             options={{ title: "Urban Eye" }}
           />
           <Stack.Screen

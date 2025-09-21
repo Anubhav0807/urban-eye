@@ -24,6 +24,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "We need access to your photos so you can attach images to your complaints.",
+          "cameraPermission": "We need access to your camera so you can take photos to include with your complaints."
+        }
+      ]
+    ]
   }
 }

@@ -36,5 +36,6 @@ export const styles = StyleSheet.create({
   button: {
     marginTop: 20,
     marginBottom: 40,
+    backgroundColor: "#cecece",
   },
 });

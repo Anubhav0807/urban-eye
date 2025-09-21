@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import Greeting from "../components/Greeting";
 
-function Home({ navigation }) {
+function HomeScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container} edges={["bottom"]}>
       <Greeting />
@@ -13,6 +13,8 @@ function Home({ navigation }) {
           onPress={() => {
             navigation.navigate("ComplaintForm");
           }}
+          iconRight="arrow-forward-circle"
+          style={styles.button}
         >
           Register a complaint
         </Button>
@@ -21,12 +23,15 @@ function Home({ navigation }) {
   );
 }
 
-export default Home;
+export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  button: {
+    backgroundColor: "#cecece",
   },
 });
