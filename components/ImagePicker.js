@@ -8,10 +8,9 @@ import {
 } from "expo-image-picker";
 
 import Button from "./Button";
-import { useState } from "react";
+import Box from "./Box";
 
-function ImageBox() {
-  const [pickedImage, setPickedImage] = useState();
+function ImagePicker({ pickedImage, setPickedImage }) {
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [mediaPermission, requestMediaPermission] =
     useMediaLibraryPermissions();
@@ -19,6 +18,7 @@ function ImageBox() {
   const imageOptions = {
     allowsEditing: true,
     aspect: [16, 9],
+    quality: 0.5,
   };
 
   async function verifyCameraPermissions() {
@@ -39,6 +39,14 @@ function ImageBox() {
     return true;
   }
 
+  function updateImage(image) {
+    setPickedImage({
+      uri: image.assets[0].uri,
+      type: image.assets[0].mimeType,
+      name: "photo.jpg",
+    });
+  }
+
   async function takeImageHandler() {
     const hasPermission = await verifyCameraPermissions();
 
@@ -49,7 +57,7 @@ function ImageBox() {
     const image = await launchCameraAsync(imageOptions);
 
     if (!image.canceled) {
-      setPickedImage(image.assets[0].uri);
+      updateImage(image);
     }
   }
 
@@ -63,15 +71,15 @@ function ImageBox() {
     const image = await launchImageLibraryAsync(imageOptions);
 
     if (!image.canceled) {
-      setPickedImage(image.assets[0].uri);
+      updateImage(image);
     }
   }
 
   return (
-    <View style={[styles.container, pickedImage && { borderStyle: "solid" }]}>
+    <Box picked={!!pickedImage}>
       {pickedImage ? (
         <Image
-          source={{ uri: pickedImage }}
+          source={{ uri: pickedImage.uri }}
           resizeMode="cover"
           style={styles.image}
         />
@@ -85,27 +93,15 @@ function ImageBox() {
           </Button>
         </View>
       )}
-    </View>
+    </Box>
   );
 }
 
-export default ImageBox;
+export default ImagePicker;
 
 const styles = StyleSheet.create({
-  container: {
-    height: 158,
-    width: 280,
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 2,
-    borderStyle: "dashed",
-    borderRadius: 12,
-    margin: 32,
-    backgroundColor: "#00000011",
-  },
   image: {
-    width: "100%",
     height: "100%",
-    borderRadius: 10,
+    width: "100%",
   },
 });
