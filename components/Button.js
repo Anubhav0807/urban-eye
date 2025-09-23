@@ -1,16 +1,47 @@
-import { Pressable, View, Text, StyleSheet } from "react-native";
+import {
+  Pressable,
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-function Button({ children, onPress, iconLeft, iconRight, iconSize, style }) {
+function Button({
+  children,
+  onPress,
+  isLoading,
+  iconLeft,
+  iconRight,
+  color,
+  size,
+  style,
+}) {
+  if (isLoading) {
+    return (
+      <View style={[styles.container, style]}>
+        <ActivityIndicator color={color} size={size} />
+      </View>
+    );
+  }
+
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => pressed && styles.pressed}
     >
       <View style={[styles.container, style]}>
-        {iconLeft && <Ionicons name={iconLeft} size={iconSize ?? 28} />}
-        <Text style={styles.label}>{children}</Text>
-        {iconRight && <Ionicons name={iconRight} size={iconSize ?? 28} />}
+        {iconLeft && (
+          <Ionicons name={iconLeft} color={color} size={size ?? 28} />
+        )}
+        {children && (
+          <Text style={[styles.label, { color: color, size: size }]}>
+            {children}
+          </Text>
+        )}
+        {iconRight && (
+          <Ionicons name={iconRight} color={color} size={size ?? 28} />
+        )}
       </View>
     </Pressable>
   );

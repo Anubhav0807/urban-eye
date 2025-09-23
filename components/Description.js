@@ -46,12 +46,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 8,
     marginVertical: 4,
+    backgroundColor: "#ffffff20",
   },
   multiline: {
     height: 120,
-  },
-  mic: {
-    backgroundColor: "#cecece",
-    borderRadius: 16,
   },
 });

@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import { View, StyleSheet, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
+import { ComplaintsContext } from "../store/complaints-context";
 
 import ImagePicker from "../components/ImagePicker";
 import LocationPicker from "../components/LocationPicker";
@@ -9,6 +12,9 @@ import Description from "../components/Description";
 import Button from "../components/Button";
 
 function ComplaintForm() {
+  const complaintsContext = useContext(ComplaintsContext);
+  const navigation = useNavigation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [pickedImage, setPickedImage] = useState(null);
   const [pickedLocation, setPickedLocation] = useState(null);
   const [description, setDescription] = useState({
@@ -21,7 +27,9 @@ function ComplaintForm() {
       Alert.alert("Error", "Please fill all fields before submitting!");
       return;
     }
-
+    
+    setIsSubmitting(true);
+    
     try {
       const formData = new FormData();
       formData.append("imageFile", pickedImage);
@@ -30,16 +38,36 @@ function ComplaintForm() {
       formData.append("latitude", pickedLocation.latitude);
       formData.append("longitude", pickedLocation.longitude);
 
-      const response = await fetch("https://httpbin.org/post", {
+      const response = await fetch("http://10.161.56.77:8080/complaint", {
         method: "POST",
         body: formData,
       });
+
+      setIsSubmitting(false);
+
       if (response.ok) {
-        Alert.alert("Success", "Complaint submitted!");
+        const id = await response.json();
+        Alert.alert("Success", "Complaint submitted!", [
+          {
+            text: "OK",
+            onPress: () => {
+              complaintsContext.addComplaint({
+                id: id,
+                imageUri: pickedImage.uri,
+                title: description.title,
+                description: description.description,
+                latitude: pickedImage.latitude,
+                longitude: pickedImage.longitude,
+              });
+              navigation.goBack();
+            },
+          },
+        ]);
       } else {
         Alert.alert("Error", `Submission failed: ${response.status}`);
       }
     } catch (error) {
+      setIsSubmitting(false);
       console.error("Submission error:", error);
       Alert.alert("Error", "Failed to submit complaint.");
     }
@@ -55,7 +83,7 @@ function ComplaintForm() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
+    <SafeAreaView style={styles.root} edges={["bottom"]}>
       <KeyboardAwareScrollView
         contentContainerStyle={styles.scrollContent}
         enableOnAndroid={true}
@@ -74,10 +102,18 @@ function ComplaintForm() {
             setDescription={setDescription}
           />
           <View style={styles.buttonsContainer}>
-            <Button style={styles.button} onPress={handleReset}>
+            <Button
+              style={[styles.button, styles.resetBtn]}
+              onPress={handleReset}
+            >
               Reset
             </Button>
-            <Button style={styles.button} onPress={handleSubmit}>
+            <Button
+              style={[styles.button, styles.submitBtn]}
+              onPress={handleSubmit}
+              color="white"
+              isLoading={isSubmitting}
+            >
               Submit
             </Button>
           </View>
@@ -90,6 +126,10 @@ function ComplaintForm() {
 export default ComplaintForm;
 
 export const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: "#98bdff",
+  },
   scrollContent: {
     flexGrow: 1,
     justifyContent: "center",
@@ -105,7 +145,12 @@ export const styles = StyleSheet.create({
   },
   button: {
     justifyContent: "center",
-    backgroundColor: "#cecece",
     width: 100,
+  },
+  submitBtn: {
+    backgroundColor: "#7978e9",
+  },
+  resetBtn: {
+    backgroundColor: "#f3797e",
   },
 });

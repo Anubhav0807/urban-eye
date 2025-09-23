@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     borderStyle: "dashed",
     borderRadius: 12,
     marginVertical: 16,
-    backgroundColor: "#00000011",
+    backgroundColor: "#00000015",
     overflow: "hidden",
   },
 });

@@ -1,24 +1,54 @@
-import { View, StyleSheet } from "react-native";
+import { useContext, useEffect, useState } from "react";
+import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import axios from "axios";
+
+import { ComplaintsContext } from "../store/complaints-context";
 
 import Button from "../components/Button";
 import Greeting from "../components/Greeting";
+import ComplaintList from "../components/ComplaintList";
 
 function HomeScreen({ navigation }) {
+  const complaintsContext = useContext(ComplaintsContext);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchComplaints();
+  }, []);
+
+  async function fetchComplaints() {
+    const response = await axios.get("http://10.161.56.77:8080/complaints");
+    complaintsContext.setComplaints(response.data);
+    setIsLoading(false);
+  }
+
   return (
-    <SafeAreaView style={styles.container} edges={["bottom"]}>
-      <Greeting />
-      <View style={{ flex: 1, justifyContent: "center" }}>
-        <Button
-          onPress={() => {
-            navigation.navigate("ComplaintForm");
-          }}
-          iconRight="arrow-forward-circle"
-          style={styles.button}
-        >
-          Register a complaint
-        </Button>
-      </View>
+    <SafeAreaView style={styles.root} edges={["bottom"]}>
+      {isLoading ? (
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <ActivityIndicator size={64} />
+        </View>
+      ) : (
+        <View style={styles.container}>
+          {complaintsContext.complaints.length > 0 ? (
+            <ComplaintList />
+          ) : (
+            <Greeting />
+          )}
+          <Button
+            onPress={() => {
+              navigation.navigate("ComplaintForm");
+            }}
+            iconRight="arrow-forward-circle"
+            style={styles.button}
+          >
+            {complaintsContext.complaints.length > 0
+              ? "Add new complaint"
+              : "Register a complaint"}
+          </Button>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -26,12 +56,17 @@ function HomeScreen({ navigation }) {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: "#98bdff",
+  },
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    padding: 8,
   },
   button: {
-    backgroundColor: "#cecece",
+    backgroundColor: "#f3797e",
+    alignSelf: "center",
+    marginVertical: 8,
   },
 });
