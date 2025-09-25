@@ -18,7 +18,7 @@ function HomeScreen({ navigation }) {
   }, []);
 
   async function fetchComplaints() {
-    const response = await axios.get("http://10.161.56.77:8080/complaints");
+    const response = await axios.get("http://localhost:8080/complaints");
     complaintsContext.setComplaints(response.data);
     setIsLoading(false);
   }

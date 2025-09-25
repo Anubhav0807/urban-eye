@@ -38,7 +38,7 @@ function ComplaintForm() {
       formData.append("latitude", pickedLocation.latitude);
       formData.append("longitude", pickedLocation.longitude);
 
-      const response = await fetch("http://10.161.56.77:8080/complaint", {
+      const response = await fetch("http://localhost:8080/complaint", {
         method: "POST",
         body: formData,
       });
@@ -46,16 +46,17 @@ function ComplaintForm() {
       setIsSubmitting(false);
 
       if (response.ok) {
-        const id = await response.json();
+        const newComplaint = await response.json();
         Alert.alert("Success", "Complaint submitted!", [
           {
             text: "OK",
             onPress: () => {
               complaintsContext.addComplaint({
-                id: id,
+                id: newComplaint.id,
                 imageUri: pickedImage.uri,
                 title: description.title,
                 description: description.description,
+                category: newComplaint.category,
                 latitude: pickedImage.latitude,
                 longitude: pickedImage.longitude,
               });

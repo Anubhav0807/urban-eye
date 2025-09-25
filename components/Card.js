@@ -14,9 +14,8 @@ function Card({ item }) {
     <View style={styles.container}>
       <View style={{ maxWidth: 140 }}>
         <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.description}>
-          {shortenDescription(item.description)}
-        </Text>
+        <Text style={styles.text}>{item.category}</Text>
+        <Text style={styles.status}>Status: Pending</Text>
       </View>
       <Image
         source={{
@@ -52,9 +51,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "white",
   },
-  description: {
+  text: {
     fontSize: 12,
     color: "#ffffffe0",
+  },
+  status: {
+    fontSize: 12,
+    color: "#ffffffe0",
+    fontWeight: "bold",
   },
   image: {
     height: 90,
