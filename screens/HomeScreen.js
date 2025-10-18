@@ -18,7 +18,7 @@ function HomeScreen({ navigation }) {
   }, []);
 
   async function fetchComplaints() {
-    const response = await axios.get("http://localhost:8080/complaints");
+    const response = await axios.get("https://urban-eye-backend.onrender.com/complaints");
     complaintsContext.setComplaints(response.data);
     setIsLoading(false);
   }
@@ -27,7 +27,7 @@ function HomeScreen({ navigation }) {
     <SafeAreaView style={styles.root} edges={["bottom"]}>
       {isLoading ? (
         <View style={{ flex: 1, justifyContent: "center" }}>
-          <ActivityIndicator size={64} />
+          <ActivityIndicator size={64} color="#4b49ac" />
         </View>
       ) : (
         <View style={styles.container}>

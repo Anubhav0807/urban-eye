@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
   },
   label: {
     marginHorizontal: 8,
+    color: "black"
   },
   pressed: {
     opacity: 0.75,

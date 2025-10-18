@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { StyleSheet, ActivityIndicator, View, Text } from "react-native";
-import MapView, { UrlTile, Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import {
   getCurrentPositionAsync,
   useForegroundPermissions,
@@ -39,6 +39,7 @@ function LocationPicker({ pickedLocation, setPickedLocation }) {
       const hasPermission = await verifyLocationPermission();
       if (!hasPermission) {
         setError("Location permission not granted");
+        setIsLoading(false);
         return;
       }
 
@@ -65,6 +66,8 @@ function LocationPicker({ pickedLocation, setPickedLocation }) {
     } catch (err) {
       setError("Failed to fetch location");
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -73,28 +76,23 @@ function LocationPicker({ pickedLocation, setPickedLocation }) {
       {pickedLocation ? (
         <MapView
           ref={mapRef}
+          provider={PROVIDER_GOOGLE}
           style={styles.map}
           initialRegion={{
             latitude: pickedLocation.latitude,
             longitude: pickedLocation.longitude,
-            latitudeDelta: 30,
-            longitudeDelta: 30,
+            latitudeDelta: 0.05,
+            longitudeDelta: 0.05,
           }}
         >
-          <UrlTile
-            urlTemplate="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            maximumZ={19}
-            flipY={false}
-            subdomains={["a", "b", "c"]}
-          />
           <Marker coordinate={pickedLocation} title="Picked Location" />
         </MapView>
+      ) : isLoading ? (
+        <ActivityIndicator size={32} color="#4b49ac" />
       ) : error ? (
         <View style={styles.center}>
           <Text>{error}</Text>
         </View>
-      ) : isLoading ? (
-        <ActivityIndicator size={32} />
       ) : (
         <Button iconLeft="locate" onPress={getCurrentLocation}>
           Current Location

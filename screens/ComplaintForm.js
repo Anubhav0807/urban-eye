@@ -38,7 +38,7 @@ function ComplaintForm() {
       formData.append("latitude", pickedLocation.latitude);
       formData.append("longitude", pickedLocation.longitude);
 
-      const response = await fetch("http://localhost:8080/complaint", {
+      const response = await fetch("https://urban-eye-backend.onrender.com/complaint", {
         method: "POST",
         body: formData,
       });
