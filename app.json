@@ -20,7 +20,11 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.anubhav0807.urbaneye"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -33,6 +37,11 @@
           "cameraPermission": "We need access to your camera so you can take photos to include with your complaints."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "4435c7a1-d215-4920-bcb0-0e8e7b7e907f"
+      }
+    }
   }
 }

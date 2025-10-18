@@ -18,7 +18,7 @@ function HomeScreen({ navigation }) {
   }, []);
 
   async function fetchComplaints() {
-    const response = await axios.get("http://localhost:8080/complaints");
+    const response = await axios.get("https://urban-eye-backend.onrender.com/complaints");
     complaintsContext.setComplaints(response.data);
     setIsLoading(false);
   }
