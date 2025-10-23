@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from "react";
-import { StyleSheet, ActivityIndicator, View, Text } from "react-native";
+import { StyleSheet, ActivityIndicator, View, Text, Alert } from "react-native";
 import MapView, { UrlTile, Marker } from "react-native-maps";
 import {
   getCurrentPositionAsync,
-  useForegroundPermissions,
+  getForegroundPermissionsAsync,
+  requestForegroundPermissionsAsync,
   PermissionStatus,
 } from "expo-location";
 
@@ -14,23 +15,37 @@ function LocationPicker({ pickedLocation, setPickedLocation }) {
   const mapRef = useRef(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [locationPermission, requestLocationPermission] =
-    useForegroundPermissions();
 
   useEffect(() => {
     setError(null);
-    setIsLoading(null);
+    setIsLoading(false);
   }, [pickedLocation]);
 
   async function verifyLocationPermission() {
-    if (
-      !locationPermission ||
-      locationPermission.status !== PermissionStatus.GRANTED
-    ) {
-      const permissionResponse = await requestLocationPermission();
-      return permissionResponse.granted;
+    try {
+      // Check existing permission
+      let { status } = await getForegroundPermissionsAsync();
+
+      // Ask again only if not already granted
+      if (status !== PermissionStatus.GRANTED) {
+        const permissionResponse = await requestForegroundPermissionsAsync();
+        status = permissionResponse.status;
+      }
+
+      // Final check
+      if (status !== PermissionStatus.GRANTED) {
+        Alert.alert(
+          "Permission denied",
+          "Location permission is required to fetch your current location."
+        );
+        return false;
+      }
+
+      return true;
+    } catch (err) {
+      console.error("Permission error:", err);
+      return false;
     }
-    return true;
   }
 
   async function getCurrentLocation() {
@@ -65,6 +80,8 @@ function LocationPicker({ pickedLocation, setPickedLocation }) {
     } catch (err) {
       setError("Failed to fetch location");
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -77,8 +94,8 @@ function LocationPicker({ pickedLocation, setPickedLocation }) {
           initialRegion={{
             latitude: pickedLocation.latitude,
             longitude: pickedLocation.longitude,
-            latitudeDelta: 30,
-            longitudeDelta: 30,
+            latitudeDelta: 0.05,
+            longitudeDelta: 0.05,
           }}
         >
           <UrlTile
@@ -89,12 +106,12 @@ function LocationPicker({ pickedLocation, setPickedLocation }) {
           />
           <Marker coordinate={pickedLocation} title="Picked Location" />
         </MapView>
+      ) : isLoading ? (
+        <ActivityIndicator size={32} />
       ) : error ? (
         <View style={styles.center}>
           <Text>{error}</Text>
         </View>
-      ) : isLoading ? (
-        <ActivityIndicator size={32} />
       ) : (
         <Button iconLeft="locate" onPress={getCurrentLocation}>
           Current Location

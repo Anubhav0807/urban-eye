@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -21,8 +21,16 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
+      "usesCleartextTraffic": true,
       "permissions": [
-        "android.permission.RECORD_AUDIO"
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "INTERNET"
       ],
       "package": "com.anubhav0807.urbaneye"
     },
@@ -31,16 +39,38 @@
     },
     "plugins": [
       [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "We need access to your location so that we can reach there and fix your complaint.",
+          "locationAlwaysAndWhenInUsePermission": "We need background access to your location for accurate complaint tracking."
+        }
+      ],
+      [
         "expo-image-picker",
         {
           "photosPermission": "We need access to your photos so you can attach images to your complaints.",
           "cameraPermission": "We need access to your camera so you can take photos to include with your complaints."
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "extraMavenRepos": [
+              "https://maps-sdk-storage.googleapis.com"
+            ],
+            "packagingOptions": {
+              "pickFirst": [
+                "**/libc++_shared.so"
+              ]
+            }
+          }
+        }
       ]
     ],
     "extra": {
       "eas": {
-        "projectId": "4435c7a1-d215-4920-bcb0-0e8e7b7e907f"
+        "projectId": "f64714e4-6aee-4941-9a20-3e592c3a9297"
       }
     }
   }
