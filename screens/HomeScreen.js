@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import axios from "axios";
 
+import api from "../api";
 import { ComplaintsContext } from "../store/complaints-context";
 
 import Button from "../components/Button";
@@ -18,7 +18,7 @@ function HomeScreen({ navigation }) {
   }, []);
 
   async function fetchComplaints() {
-    const response = await axios.get("https://urban-eye-backend.onrender.com/complaints");
+    const response = await api.get("/complaints");
     complaintsContext.setComplaints(response.data);
     setIsLoading(false);
   }

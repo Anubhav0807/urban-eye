@@ -4,6 +4,7 @@ import { View, StyleSheet, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
+import api from "../api";
 import { ComplaintsContext } from "../store/complaints-context";
 
 import ImagePicker from "../components/ImagePicker";
@@ -27,9 +28,9 @@ function ComplaintForm() {
       Alert.alert("Error", "Please fill all fields before submitting!");
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
       const formData = new FormData();
       formData.append("imageFile", pickedImage);
@@ -38,37 +39,30 @@ function ComplaintForm() {
       formData.append("latitude", pickedLocation.latitude);
       formData.append("longitude", pickedLocation.longitude);
 
-      const response = await fetch("https://urban-eye-backend.onrender.com/complaint", {
-        method: "POST",
-        body: formData,
+      const response = await api.post("/complaint", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
-      setIsSubmitting(false);
+      const newComplaint = response.data;
 
-      if (response.ok) {
-        const newComplaint = await response.json();
-        Alert.alert("Success", "Complaint submitted!", [
-          {
-            text: "OK",
-            onPress: () => {
-              complaintsContext.addComplaint({
-                id: newComplaint.id,
-                imageUri: pickedImage.uri,
-                title: description.title,
-                description: description.description,
-                category: newComplaint.category,
-                latitude: pickedImage.latitude,
-                longitude: pickedImage.longitude,
-              });
-              navigation.goBack();
-            },
+      Alert.alert("Success", "Complaint submitted!", [
+        {
+          text: "OK",
+          onPress: () => {
+            complaintsContext.addComplaint({
+              id: newComplaint.id,
+              imageUri: pickedImage.uri,
+              title: description.title,
+              description: description.description,
+              category: newComplaint.category,
+              latitude: pickedLocation.latitude,
+              longitude: pickedLocation.longitude,
+            });
+            navigation.goBack();
           },
-        ]);
-      } else {
-        Alert.alert("Error", `Submission failed: ${response.status}`);
-      }
+        },
+      ]);
     } catch (error) {
-      setIsSubmitting(false);
       console.error("Submission error:", error);
       Alert.alert("Error", "Failed to submit complaint.");
     }
