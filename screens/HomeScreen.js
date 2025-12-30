@@ -2,15 +2,18 @@ import { useContext, useEffect, useState } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import api from "../api";
-import { ComplaintsContext } from "../store/complaints-context";
-
 import Button from "../components/Button";
 import Greeting from "../components/Greeting";
 import ComplaintList from "../components/ComplaintList";
 
+import { ComplaintsContext } from "../store/complaints-context";
+import { UserContext } from "../store/user-context";
+
+import api from "../api";
+
 function HomeScreen({ navigation }) {
   const complaintsContext = useContext(ComplaintsContext);
+  const userContext = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -18,7 +21,11 @@ function HomeScreen({ navigation }) {
   }, []);
 
   async function fetchComplaints() {
-    const response = await api.get("/complaints");
+    const response = await api.get("/complaints", {
+      headers: {
+        Authorization: `Bearer ${userContext.user.token}`,
+      },
+    });
     complaintsContext.setComplaints(response.data);
     setIsLoading(false);
   }
@@ -26,7 +33,7 @@ function HomeScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.root} edges={["bottom"]}>
       {isLoading ? (
-        <View style={{ flex: 1, justifyContent: "center" }}>
+        <View style={styles.indicatorContainer}>
           <ActivityIndicator size={64} color="#4b49ac" />
         </View>
       ) : (
@@ -38,7 +45,7 @@ function HomeScreen({ navigation }) {
           )}
           <Button
             onPress={() => {
-              navigation.navigate("ComplaintForm");
+              navigation.navigate("NewComplaintScreen");
             }}
             iconRight="arrow-forward-circle"
             style={styles.button}
@@ -59,6 +66,10 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: "#98bdff",
+  },
+  indicatorContainer: {
+    flex: 1,
+    justifyContent: "center",
   },
   container: {
     flex: 1,

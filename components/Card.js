@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   title: {
+    width: 120,
     fontSize: 18,
     color: "white",
   },

@@ -1,11 +1,13 @@
 import { View, TextInput, StyleSheet } from "react-native";
 
+import { inputStyle } from "./sharedStyles";
+
 function Description({ description, setDescription }) {
   return (
     <View style={styles.container}>
       <View style={styles.innerContainer}>
         <TextInput
-          style={styles.input}
+          style={inputStyle}
           placeholder="Problem Title"
           placeholderTextColor="#666"
           cursorColor="black"
@@ -18,7 +20,7 @@ function Description({ description, setDescription }) {
           }
         />
         <TextInput
-          style={[styles.input, styles.multiline]}
+          style={[inputStyle, styles.multiline]}
           placeholder="Describe your problem here"
           placeholderTextColor="#666"
           cursorColor="black"
@@ -43,15 +45,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "flex-start",
     padding: 12,
-  },
-  input: {
-    borderWidth: 1,
-    width: 280,
-    borderRadius: 12,
-    padding: 8,
-    marginVertical: 4,
-    color: "black",
-    backgroundColor: "#ffffff20",
   },
   multiline: {
     height: 120,
