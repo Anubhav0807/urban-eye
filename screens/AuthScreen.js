@@ -39,35 +39,51 @@ function AuthScreen() {
 
   async function loginHandler() {
     Keyboard.dismiss();
-    setIsLoggingOn(true);
-    const response = await api.post("/auth/login", {
-      username: username,
-      password: password,
-    });
-    setIsLoggingOn(false);
 
-    const user = { username: username, token: response.data };
-    userContext.setUser(user);
     try {
-      await AsyncStorage.setItem("user", JSON.stringify(user));
-    } catch (e) {
-      console.log("Error storing token:", e);
+      setIsLoggingOn(true);
+      const response = await api.post("/auth/login", {
+        username: username,
+        password: password,
+      });
+      const user = { username: username, token: response.data };
+      userContext.setUser(user);
+      try {
+        await AsyncStorage.setItem("user", JSON.stringify(user));
+      } catch (e) {
+        console.log("Error storing token:", e);
+      }
+    } catch (error) {
+      let reason = "Something went wrong. Please try again later.";
+      if (error.response?.status === 401) {
+        reason = "The entered password is incorrect. Please try again.";
+      } else if (error.response?.status === 404) {
+        reason = "The entered username does not exists. Please try again.";
+      }
+      Alert.alert("Login Failed", reason);
+    } finally {
+      setIsLoggingOn(false);
     }
   }
 
   async function signupHandler() {
     Keyboard.dismiss();
-    setIsSigningUp(true);
-    await api.post("/auth/signup", {
-      username: username,
-      password: password,
-    });
-    setIsSigningUp(false);
-
-    Alert.alert(
-      "Signup Successful",
-      "Your account has been created, you may login now."
-    );
+    try {
+      setIsSigningUp(true);
+      await api.post("/auth/signup", {
+        username: username,
+        password: password,
+      });
+      Alert.alert(
+        "Signup Successful",
+        "Your account has been created, you may login now."
+      );
+    } catch (error) {
+      let reason = "Something went wrong. Please try again later.";
+      Alert.alert("Signup Failed", reason);
+    } finally {
+      setIsSigningUp(false);
+    }
   }
 
   return (

@@ -12,15 +12,10 @@ import Button from "./Button";
 
 function LocationPicker({ pickedLocation, setPickedLocation }) {
   const mapRef = useRef(null);
-  const [error, setError] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [locationPermission, requestLocationPermission] =
     useForegroundPermissions();
-
-  useEffect(() => {
-    setError(null);
-    setIsLoading(null);
-  }, [pickedLocation]);
 
   async function verifyLocationPermission() {
     if (
@@ -35,10 +30,11 @@ function LocationPicker({ pickedLocation, setPickedLocation }) {
 
   async function getCurrentLocation() {
     setIsLoading(true);
+    setErrorMsg(null);
     try {
       const hasPermission = await verifyLocationPermission();
       if (!hasPermission) {
-        setError("Location permission not granted");
+        setErrorMsg("Location permission not granted");
         setIsLoading(false);
         return;
       }
@@ -64,8 +60,8 @@ function LocationPicker({ pickedLocation, setPickedLocation }) {
         }
       }, 500);
     } catch (err) {
-      setError("Failed to fetch location");
-      console.error(err);
+      setErrorMsg("Failed to fetch location");
+      console.errorMsg(err);
     } finally {
       setIsLoading(false);
     }
@@ -89,9 +85,10 @@ function LocationPicker({ pickedLocation, setPickedLocation }) {
         </MapView>
       ) : isLoading ? (
         <ActivityIndicator size={32} color="#4b49ac" />
-      ) : error ? (
+      ) : errorMsg ? (
         <View style={styles.center}>
-          <Text>{error}</Text>
+          <Text>{errorMsg}</Text>
+          <Button iconRight="refresh" onPress={getCurrentLocation} />
         </View>
       ) : (
         <Button iconLeft="locate" onPress={getCurrentLocation}>

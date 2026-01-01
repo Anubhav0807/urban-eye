@@ -30,14 +30,19 @@ function NewComplaintScreen() {
   async function handleSubmit() {
     Keyboard.dismiss();
 
-    if (!pickedImage || !pickedLocation || !description) {
+    if (
+      !pickedImage ||
+      !pickedLocation ||
+      !description.title ||
+      !description.description
+    ) {
       Alert.alert("Error", "Please fill all fields before submitting!");
       return;
     }
 
-    setIsSubmitting(true);
-
     try {
+      setIsSubmitting(true);
+
       const formData = new FormData();
       formData.append("imageFile", pickedImage);
       formData.append("title", description.title);
@@ -72,8 +77,27 @@ function NewComplaintScreen() {
         },
       ]);
     } catch (error) {
-      console.error("Submission error:", error);
-      Alert.alert("Error", "Failed to submit complaint.");
+      if (error.response?.status === 401) {
+        Alert.alert(
+          "Submission Failed",
+          "Your session has expired. Please login again.",
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                userContext.clearUser();
+              },
+            },
+          ]
+        );
+      } else {
+        Alert.alert(
+          "Submission Failed",
+          "Something went wrong. Make sure you are connected to the internet."
+        );
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
