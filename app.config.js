@@ -2,7 +2,7 @@ import "dotenv/config";
 
 export default {
   expo: {
-    name: "urban-eye",
+    name: "Urban Eye",
     slug: "urban-eye",
     version: "1.0.0",
     orientation: "portrait",

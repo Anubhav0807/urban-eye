@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://halting-gaylene-uninflicted.ngrok-free.dev",
+  baseURL: process.env.EXPO_PUBLIC_BACKEND_URL,
 });
 
 api.interceptors.request.use(
