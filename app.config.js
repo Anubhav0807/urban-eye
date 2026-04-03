@@ -8,6 +8,7 @@ export default {
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
+    backgroundColor: "#98bdff",
     newArchEnabled: true,
     splash: {
       image: "./assets/splash-icon.png",

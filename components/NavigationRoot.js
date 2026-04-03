@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { View, ActivityIndicator, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import AuthScreen from "../screens/AuthScreen";
 import HomeScreen from "../screens/HomeScreen";
+import ComplaintDetailsScreen from "../screens/ComplaintDetailsScreen";
 import NewComplaintScreen from "../screens/NewComplaintScreen";
 
 import Button from "./Button";
@@ -40,11 +41,7 @@ function NavigationRoot() {
   }
 
   if (isLoading) {
-    return (
-      <View style={styles.indicatorContainer}>
-        <ActivityIndicator size={64} color="#4b49ac" />
-      </View>
-    );
+    return <View style={styles.blankScreen} />;
   }
 
   if (!userContext.user) {
@@ -64,10 +61,6 @@ function NavigationRoot() {
                   size={36}
                   onPress={toggleProfileMenu}
                 />
-                <ProfileMenu
-                  isModalVisible={isModalVisible}
-                  onClose={toggleProfileMenu}
-                />
               </>
             ),
             headerTintColor: "white",
@@ -80,11 +73,23 @@ function NavigationRoot() {
             options={{ title: "Urban Eye" }}
           />
           <Stack.Screen
+            name="ComplaintDetailsScreen"
+            component={ComplaintDetailsScreen}
+            options={{
+              animation: "scale_from_center",
+            }}
+          />
+          <Stack.Screen
             name="NewComplaintScreen"
             component={NewComplaintScreen}
             options={{ title: "New Complain" }}
           />
         </Stack.Navigator>
+
+        <ProfileMenu
+          isModalVisible={isModalVisible}
+          onClose={toggleProfileMenu}
+        />
       </NavigationContainer>
     </ComplaintsContextProvider>
   );
@@ -93,7 +98,7 @@ function NavigationRoot() {
 export default NavigationRoot;
 
 const styles = StyleSheet.create({
-  indicatorContainer: {
+  blankScreen: {
     flex: 1,
     justifyContent: "center",
   },

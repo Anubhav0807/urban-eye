@@ -6,7 +6,7 @@ import { ComplaintsContext } from "../store/complaints-context";
 
 // https://stackoverflow.com/questions/54564136/react-native-flatlist-extending-beyond-screen-when-rendered-with-a-header
 
-function ComplaintList() {
+function ComplaintList({ refreshing, onRefresh }) {
   const complaintsCtx = useContext(ComplaintsContext);
 
   return (
@@ -16,6 +16,8 @@ function ComplaintList() {
         data={complaintsCtx.complaints}
         renderItem={(itemData) => <Card item={itemData.item} />}
         keyExtractor={(item) => item.id}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
       />
     </>
   );

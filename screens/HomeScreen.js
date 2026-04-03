@@ -16,7 +16,8 @@ function HomeScreen({ navigation }) {
   const userContext = useContext(UserContext);
 
   const [errorType, setErrorType] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchComplaints();
@@ -24,13 +25,14 @@ function HomeScreen({ navigation }) {
 
   async function fetchComplaints() {
     try {
-      setIsLoading(true);
       setErrorType(null);
+
       const response = await api.get("/complaints", {
         headers: {
           Authorization: `Bearer ${userContext.user.token}`,
         },
       });
+
       complaintsContext.setComplaints(response.data);
     } catch (error) {
       if (error.response?.status === 401) {
@@ -45,15 +47,28 @@ function HomeScreen({ navigation }) {
                 userContext.clearUser();
               },
             },
-          ]
+          ],
         );
       } else {
         setErrorType(ErrorType.OTHER);
       }
-    } finally {
-      setIsLoading(false);
     }
   }
+
+  async function onRefresh() {
+    setRefreshing(true);
+    await fetchComplaints();
+    setRefreshing(false);
+  }
+
+  useEffect(() => {
+    async function load() {
+      setIsLoading(true);
+      await fetchComplaints();
+      setIsLoading(false);
+    }
+    load();
+  }, []);
 
   if (isLoading) {
     return (
@@ -92,10 +107,11 @@ function HomeScreen({ navigation }) {
     <SafeAreaView style={styles.root} edges={["bottom"]}>
       <View style={styles.container}>
         {complaintsContext.complaints.length > 0 ? (
-          <ComplaintList />
+          <ComplaintList refreshing={refreshing} onRefresh={onRefresh} />
         ) : (
           <Greeting />
         )}
+
         <Button
           onPress={() => {
             navigation.navigate("NewComplaintScreen");

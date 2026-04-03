@@ -1,5 +1,6 @@
-import { useContext } from "react";
-import { View, Text, StyleSheet, Modal, Pressable } from "react-native";
+import { useContext, useEffect } from "react";
+import { View, Text, StyleSheet, Pressable, BackHandler } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import Button from "../components/Button";
@@ -8,6 +9,27 @@ import { UserContext } from "../store/user-context";
 
 function ProfileMenu({ isModalVisible, onClose }) {
   const userContext = useContext(UserContext);
+  const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    function onBackPress() {
+      if (isModalVisible) {
+        onClose();
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    const subscription = BackHandler.addEventListener(
+      "hardwareBackPress",
+      onBackPress,
+    );
+
+    return () => subscription.remove();
+  }, [isModalVisible]);
+
+  if (!isModalVisible) return null;
 
   async function logout() {
     onClose();
@@ -20,17 +42,22 @@ function ProfileMenu({ isModalVisible, onClose }) {
   }
 
   return (
-    <Modal visible={isModalVisible} transparent>
-      <Pressable style={styles.overlay} onPress={onClose} />
-      <View style={styles.container}>
+    <View style={StyleSheet.absoluteFill}>
+      <Pressable
+        style={[styles.overlay, { paddingTop: insets.top }]}
+        onPress={onClose}
+      />
+
+      <View style={[styles.container, { top: insets.top + 48 }]}>
         <Text style={styles.username}>
           {titleCase(userContext.user.username)}
         </Text>
+
         <Button style={styles.button} iconRight="exit" onPress={logout}>
           Logout
         </Button>
       </View>
-    </Modal>
+    </View>
   );
 }
 
@@ -44,11 +71,11 @@ export default ProfileMenu;
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
+    backgroundColor: "rgba(0,0,0,0.2)",
   },
   container: {
     position: "absolute",
-    top: 72,
-    right: 24,
+    right: 42,
     backgroundColor: "#7da0fa",
     borderRadius: 12,
     borderTopRightRadius: 0,

@@ -1,7 +1,9 @@
-import { Text, View, StyleSheet, Image } from "react-native";
+import { Text, View, StyleSheet, Image, Pressable } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 function Card({ item }) {
   const charLimit = 50;
+  const navigation = useNavigation();
 
   function shortenDescription(description) {
     if (!description) return "";
@@ -10,12 +12,19 @@ function Card({ item }) {
       : description;
   }
 
+  function showDetails() {
+    navigation.navigate("ComplaintDetailsScreen", { complaint: item });
+  }
+
   return (
-    <View style={styles.container}>
+    <Pressable
+      onPress={showDetails}
+      style={({ pressed }) => [styles.container, pressed && styles.pressed]}
+    >
       <View style={{ maxWidth: 140 }}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.text}>{item.category}</Text>
-        <Text style={styles.status}>Status: Pending</Text>
+        <Text style={styles.status}>Status: {item.status}</Text>
       </View>
       <Image
         source={{
@@ -25,7 +34,7 @@ function Card({ item }) {
         }}
         style={styles.image}
       />
-    </View>
+    </Pressable>
   );
 }
 
@@ -48,6 +57,9 @@ const styles = StyleSheet.create({
 
     // Android shadow
     elevation: 5,
+  },
+  pressed: {
+    opacity: 0.75,
   },
   title: {
     width: 120,
