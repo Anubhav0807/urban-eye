@@ -19,7 +19,7 @@ export default {
       supportsTablet: true,
       bundleIdentifier: "com.anubhav0807.urbaneye",
       config: {
-        googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
+        googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
       },
     },
     android: {
@@ -39,7 +39,7 @@ export default {
       package: "com.anubhav0807.urbaneye",
       config: {
         googleMaps: {
-          apiKey: process.env.GOOGLE_MAPS_API_KEY,
+          apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
         },
       },
     },

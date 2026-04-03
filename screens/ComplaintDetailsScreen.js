@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+
 import {
   View,
   ScrollView,
@@ -10,12 +11,16 @@ import {
   BackHandler,
   useWindowDimensions,
 } from "react-native";
+
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+
 import MaskedView from "@react-native-masked-view/masked-view";
+
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { reverseGeocode } from "../utils";
 
 const MAP_RADIUS = 200;
 const ANIMATION_DURATION = 500;
@@ -29,6 +34,7 @@ function ComplaintDetailsScreen({ navigation, route }) {
   const initialOffset = height * 0.0000023;
 
   const mapRef = useRef(null);
+  const markerRef = useRef(null);
   const widthAnim = useRef(new Animated.Value(MAP_RADIUS)).current;
   const heightAnim = useRef(new Animated.Value(MAP_RADIUS)).current;
   const radiusAnim = useRef(new Animated.Value(MAP_RADIUS / 2)).current;
@@ -37,6 +43,7 @@ function ComplaintDetailsScreen({ navigation, route }) {
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
   const [isExpanded, setIsExpanded] = useState(false);
+  const [address, setAddress] = useState("");
 
   const statusColor = complaint.status === "Complete" ? "#4CAF50" : "#f3797e";
 
@@ -77,6 +84,10 @@ function ComplaintDetailsScreen({ navigation, route }) {
         ANIMATION_DURATION,
       );
     }
+
+    setTimeout(() => {
+      markerRef.current?.showCallout();
+    }, ANIMATION_DURATION);
 
     setIsExpanded(true);
   }
@@ -119,6 +130,8 @@ function ComplaintDetailsScreen({ navigation, route }) {
       );
     }
 
+    markerRef.current?.hideCallout();
+
     setIsExpanded(false);
   }
 
@@ -131,13 +144,25 @@ function ComplaintDetailsScreen({ navigation, route }) {
   }
 
   useEffect(() => {
+    async function getAddress() {
+      const result = await reverseGeocode(
+        complaint.latitude,
+        complaint.longitude,
+      );
+      setAddress(result);
+    }
+
+    getAddress();
+  }, []);
+
+  useEffect(() => {
     function onBackPress() {
       if (isExpanded) {
         collapseMap(); // collapse instead of leaving screen
         return true; // prevent default back behavior
       }
       return false; // allow navigation back
-    };
+    }
 
     const subscription = BackHandler.addEventListener(
       "hardwareBackPress",
@@ -168,7 +193,7 @@ function ComplaintDetailsScreen({ navigation, route }) {
         </View>
 
         <View style={styles.textContainer}>
-          <ScrollView style={{ maxHeight: 160 }} scrollEnabled={!isExpanded}>
+          <ScrollView style={{ maxHeight: 100 }} scrollEnabled={!isExpanded}>
             <Text>{complaint.description}</Text>
           </ScrollView>
           <Text style={{ marginVertical: 16 }}>
@@ -181,6 +206,10 @@ function ComplaintDetailsScreen({ navigation, route }) {
               <Text>{complaint.status}</Text>
             </View>
           </View>
+          <Text style={{ marginVertical: 16 }}>
+            <Text style={{ fontWeight: "bold" }}>Location: </Text>
+            {address}
+          </Text>
         </View>
 
         <AnimatedPressable
@@ -235,6 +264,7 @@ function ComplaintDetailsScreen({ navigation, route }) {
             }}
           >
             <Marker
+              ref={markerRef}
               coordinate={{
                 latitude: complaint.latitude,
                 longitude: complaint.longitude,

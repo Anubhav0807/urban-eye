@@ -4,8 +4,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import Button from "../components/Button";
-
 import { UserContext } from "../store/user-context";
+import { titleCase } from "../utils";
 
 function ProfileMenu({ isModalVisible, onClose }) {
   const userContext = useContext(UserContext);
@@ -59,11 +59,6 @@ function ProfileMenu({ isModalVisible, onClose }) {
       </View>
     </View>
   );
-}
-
-function titleCase(word) {
-  if (!word) return "";
-  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 }
 
 export default ProfileMenu;

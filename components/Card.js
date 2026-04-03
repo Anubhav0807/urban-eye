@@ -2,15 +2,7 @@ import { Text, View, StyleSheet, Image, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 function Card({ item }) {
-  const charLimit = 50;
   const navigation = useNavigation();
-
-  function shortenDescription(description) {
-    if (!description) return "";
-    return description.length > charLimit
-      ? description.substring(0, charLimit) + "..."
-      : description;
-  }
 
   function showDetails() {
     navigation.navigate("ComplaintDetailsScreen", { complaint: item });

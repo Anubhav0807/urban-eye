@@ -13,11 +13,11 @@ Urban Eye is a React Native mobile application built with Expo that allows users
 - Add the following variables when prompted:
   ```bash
   EXPO_PUBLIC_BACKEND_URL=https://urban-eye-backend.onrender.com
-  GOOGLE_MAPS_API_KEY=your_api_key
+  EXPO_PUBLIC_GOOGLE_MAPS_API_KEY=your_api_key
   ```
 - Keep variable type as `String`
-- Keep visibility as plain text for urls and secret for api keys
-- Select all environments by pressing 'A' key and then and press enter
+- Keep visibility as `Plain text`
+- Select all environments and then and press enter
 
 ## Command to build for android
 ```bash
