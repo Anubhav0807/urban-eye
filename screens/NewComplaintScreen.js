@@ -12,6 +12,7 @@ import ButtonPair from "../components/ButtonPair";
 import { ComplaintsContext } from "../store/complaints-context";
 import { UserContext } from "../store/user-context";
 
+import axios from "axios";
 import api from "../api";
 
 function NewComplaintScreen() {
@@ -26,6 +27,47 @@ function NewComplaintScreen() {
     title: "",
     description: "",
   });
+
+  async function getCloudinaryConfig() {
+    const response = await api.get("/cloudinary/generate-signature");
+    return response.data;
+  }
+
+  async function uploadImage(imageUri) {
+    try {
+      const config = await getCloudinaryConfig();
+
+      const formData = new FormData();
+
+      formData.append("file", {
+        uri: imageUri,
+        type: "image/jpeg",
+        name: "upload.jpg",
+      });
+
+      formData.append("api_key", config.apiKey);
+      formData.append("timestamp", config.timestamp);
+      formData.append("signature", config.signature);
+      formData.append("folder", config.folder);
+
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${config.cloudName}/image/upload`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+
+      return response.data;
+    } catch (error) {
+      console.log(
+        "Upload error:",
+        error.response?.data?.error?.message || error.message,
+      );
+    }
+  }
 
   async function handleSubmit() {
     Keyboard.dismiss();
@@ -43,17 +85,28 @@ function NewComplaintScreen() {
     try {
       setIsSubmitting(true);
 
-      const formData = new FormData();
-      formData.append("imageFile", pickedImage);
-      formData.append("title", description.title);
-      formData.append("description", description.description);
-      formData.append("latitude", pickedLocation.latitude);
-      formData.append("longitude", pickedLocation.longitude);
+      const uploaded = await uploadImage(pickedImage.uri);
 
-      const response = await api.post("/complaint", formData, {
+      if (uploaded == null) {
+        Alert.alert(
+          "Submission Failed",
+          "Something went wrong during uploading the image.",
+        );
+        return;
+      }
+
+      const payload = {
+        title: description.title,
+        description: description.description,
+        latitude: pickedLocation.latitude,
+        longitude: pickedLocation.longitude,
+        imageUri: uploaded.secure_url,
+        publicId: uploaded.public_id,
+      };
+
+      const response = await api.post("/complaint", payload, {
         headers: {
           Authorization: `Bearer ${userContext.user.token}`,
-          "Content-Type": "multipart/form-data",
         },
       });
 
@@ -65,7 +118,7 @@ function NewComplaintScreen() {
           onPress: () => {
             complaintsContext.addComplaint({
               id: newComplaint.id,
-              imageUri: pickedImage.uri,
+              imageUri: uploaded.secure_url,
               title: description.title,
               description: description.description,
               category: newComplaint.category,
@@ -88,12 +141,12 @@ function NewComplaintScreen() {
                 userContext.clearUser();
               },
             },
-          ]
+          ],
         );
       } else {
         Alert.alert(
           "Submission Failed",
-          "Something went wrong. Make sure you are connected to the internet."
+          "Something went wrong. Make sure you are connected to the internet.",
         );
       }
     } finally {
