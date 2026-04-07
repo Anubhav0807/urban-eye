@@ -54,12 +54,8 @@ function AuthScreen() {
         console.log("Error storing token:", e);
       }
     } catch (error) {
-      let reason = "Something went wrong. Please try again later.";
-      if (error.response?.status === 401) {
-        reason = "The entered password is incorrect. Please try again.";
-      } else if (error.response?.status === 404) {
-        reason = "The entered username does not exists. Please try again.";
-      }
+      let reason =
+        error.response?.data || "Something went wrong. Please try again later.";
       Alert.alert("Login Failed", reason);
     } finally {
       setIsLoggingOn(false);
@@ -73,13 +69,15 @@ function AuthScreen() {
       await api.post("/auth/signup", {
         username: username,
         password: password,
+        role: "user",
       });
       Alert.alert(
         "Signup Successful",
-        "Your account has been created, you may login now."
+        "Your account has been created, you may login now.",
       );
     } catch (error) {
-      let reason = "Something went wrong. Please try again later.";
+      let reason =
+        error.response?.data || "Something went wrong. Please try again later.";
       Alert.alert("Signup Failed", reason);
     } finally {
       setIsSigningUp(false);

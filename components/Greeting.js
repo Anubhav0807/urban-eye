@@ -1,15 +1,28 @@
-import { Text, View, StyleSheet } from "react-native";
+import {
+  Text,
+  View,
+  ScrollView,
+  StyleSheet,
+  RefreshControl,
+} from "react-native";
 import BlinkingEye from "./BlinkingEye";
 
-function Greeting() {
+function Greeting({ refreshing, onRefresh }) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>
-        Welcome to <Text style={styles.title}>Urban Eye</Text>!
-      </Text>
-      <Text style={styles.text}>Your own complaint forum!</Text>
-      <BlinkingEye style={styles.image}/>
-    </View>
+    <ScrollView
+      style={{ flex: 1 }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
+      <View style={styles.container}>
+        <Text style={styles.text}>
+          Welcome to <Text style={styles.title}>Urban Eye</Text>!
+        </Text>
+        <Text style={styles.text}>Your own complaint forum!</Text>
+        <BlinkingEye style={styles.image} />
+      </View>
+    </ScrollView>
   );
 }
 
@@ -17,13 +30,12 @@ export default Greeting;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    marginTop: 32,
+    paddingVertical: 152,
   },
   text: {
     fontSize: 24,
+    textAlign: "center"
   },
   title: {
     fontWeight: "bold",

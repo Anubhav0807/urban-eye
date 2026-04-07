@@ -4,6 +4,7 @@ export const ComplaintsContext = createContext({
   complaints: [],
   setComplaints: (complaints) => {},
   addComplaint: ({
+    id,
     imageBase64,
     imageUri,
     title,

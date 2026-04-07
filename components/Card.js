@@ -14,9 +14,11 @@ function Card({ item }) {
       style={({ pressed }) => [styles.container, pressed && styles.pressed]}
     >
       <View style={{ maxWidth: 140 }}>
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.text}>{item.category}</Text>
-        <Text style={styles.status}>Status: {item.status}</Text>
+        <Text style={styles.title}>{item.title || "Untitled"}</Text>
+        <Text style={styles.text}>{item.category || "Uncategorized"}</Text>
+        <Text style={styles.status}>
+          Status: {item.status || "Unspecified"}
+        </Text>
       </View>
       <Image
         source={{
