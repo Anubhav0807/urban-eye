@@ -12,7 +12,7 @@ import ButtonPair from "../components/ButtonPair";
 import { ComplaintsContext } from "../store/complaints-context";
 import { UserContext } from "../store/user-context";
 
-import axios from "axios";
+import { uploadImage } from "../utils";
 import api from "../api";
 
 function NewComplaintScreen() {
@@ -27,47 +27,6 @@ function NewComplaintScreen() {
     title: "",
     description: "",
   });
-
-  async function getCloudinaryConfig() {
-    const response = await api.get("/cloudinary/generate-signature");
-    return response.data;
-  }
-
-  async function uploadImage(imageUri) {
-    try {
-      const config = await getCloudinaryConfig();
-
-      const formData = new FormData();
-
-      formData.append("file", {
-        uri: imageUri,
-        type: "image/jpeg",
-        name: "upload.jpg",
-      });
-
-      formData.append("api_key", config.apiKey);
-      formData.append("timestamp", config.timestamp);
-      formData.append("signature", config.signature);
-      formData.append("folder", config.folder);
-
-      const response = await axios.post(
-        `https://api.cloudinary.com/v1_1/${config.cloudName}/image/upload`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        },
-      );
-
-      return response.data;
-    } catch (error) {
-      console.log(
-        "Upload error:",
-        error.response?.data?.error?.message || error.message,
-      );
-    }
-  }
 
   async function handleSubmit() {
     Keyboard.dismiss();
@@ -124,6 +83,7 @@ function NewComplaintScreen() {
               category: newComplaint.category,
               latitude: pickedLocation.latitude,
               longitude: pickedLocation.longitude,
+              status: newComplaint.status,
             });
             navigation.goBack();
           },

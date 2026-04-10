@@ -61,12 +61,13 @@ function HomeScreen({ navigation }) {
     setRefreshing(false);
   }
 
+  async function load() {
+    setIsLoading(true);
+    await fetchComplaints();
+    setIsLoading(false);
+  }
+
   useEffect(() => {
-    async function load() {
-      setIsLoading(true);
-      await fetchComplaints();
-      setIsLoading(false);
-    }
     load();
   }, []);
 
@@ -92,11 +93,7 @@ function HomeScreen({ navigation }) {
       <View style={styles.center}>
         <Text>Something went wrong.</Text>
         <Text>Make sure you are connected to the internet.</Text>
-        <Button
-          onPress={fetchComplaints}
-          iconRight="refresh"
-          style={styles.refreshButton}
-        >
+        <Button onPress={load} iconRight="refresh" style={styles.refreshButton}>
           Refresh
         </Button>
       </View>

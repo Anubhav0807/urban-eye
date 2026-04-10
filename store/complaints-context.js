@@ -17,7 +17,7 @@ export const ComplaintsContext = createContext({
 function complaintReducer(state, action) {
   switch (action.type) {
     case "SET":
-      return action.payload.reverse();
+      return [...action.payload].reverse();
     case "ADD":
       return [action.payload, ...state];
     default:
