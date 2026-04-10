@@ -1,4 +1,4 @@
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image, Pressable, Alert } from "react-native";
 import {
   PermissionStatus,
   useCameraPermissions,
@@ -75,25 +75,45 @@ function ImagePicker({ pickedImage, setPickedImage }) {
     }
   }
 
+  function resetImageHandler() {
+    Alert.alert(
+      "Change Image?",
+      "Do you want to remove this image to upload another image?",
+      [
+        {
+          text: "NO",
+        },
+        {
+          text: "YES",
+          onPress: () => {
+            setPickedImage(null);
+          },
+        },
+      ],
+    );
+  }
+
   return (
-    <Box picked={!!pickedImage}>
-      {pickedImage ? (
-        <Image
-          source={{ uri: pickedImage.uri }}
-          resizeMode="cover"
-          style={styles.image}
-        />
-      ) : (
-        <View>
-          <Button iconLeft="camera" onPress={takeImageHandler}>
-            Take a picture
-          </Button>
-          <Button iconLeft="folder" onPress={uploadImageHandler}>
-            Upload an image
-          </Button>
-        </View>
-      )}
-    </Box>
+    <Pressable onPress={resetImageHandler}>
+      <Box picked={!!pickedImage}>
+        {pickedImage ? (
+          <Image
+            source={{ uri: pickedImage.uri }}
+            resizeMode="cover"
+            style={styles.image}
+          />
+        ) : (
+          <View>
+            <Button iconLeft="camera" onPress={takeImageHandler}>
+              Take a picture
+            </Button>
+            <Button iconLeft="folder" onPress={uploadImageHandler}>
+              Upload an image
+            </Button>
+          </View>
+        )}
+      </Box>
+    </Pressable>
   );
 }
 
