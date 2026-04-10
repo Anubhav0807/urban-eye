@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { View, StyleSheet, Alert, Keyboard } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,6 +19,8 @@ function NewComplaintScreen() {
   const complaintsContext = useContext(ComplaintsContext);
   const userContext = useContext(UserContext);
 
+  const isMounted = useRef(true);
+
   const navigation = useNavigation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pickedImage, setPickedImage] = useState(null);
@@ -26,6 +28,12 @@ function NewComplaintScreen() {
   const [description, setDescription] = useState({
     title: "",
     description: "",
+  });
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
   });
 
   async function handleSubmit() {
@@ -85,7 +93,7 @@ function NewComplaintScreen() {
               longitude: pickedLocation.longitude,
               status: newComplaint.status,
             });
-            navigation.goBack();
+            if (!isMounted.current) navigation.goBack();
           },
         },
       ]);
