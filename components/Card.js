@@ -22,9 +22,7 @@ function Card({ item }) {
       </View>
       <Image
         source={{
-          uri:
-            item.imageUri ??
-            `data:${item.imageType};base64,${item.imageBase64}`,
+          uri: item.finalImageUri ?? item.imageUri,
         }}
         style={styles.image}
       />

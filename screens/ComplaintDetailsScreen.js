@@ -57,9 +57,7 @@ function ComplaintDetailsScreen({ navigation, route }) {
         <View style={styles.imageContainer}>
           <Image
             source={{
-              uri:
-                complaint.imageUri ??
-                `data:${complaint.imageType};base64,${complaint.imageBase64}`,
+              uri: complaint.finalImageUri ?? complaint.imageUri,
             }}
             style={styles.image}
           />
